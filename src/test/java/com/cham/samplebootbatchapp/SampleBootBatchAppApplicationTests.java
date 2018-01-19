@@ -11,8 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
 @ActiveProfiles("int")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes={DemoJobDef.class,SampleBootBatchAppApplication.class })
@@ -30,12 +28,7 @@ public class SampleBootBatchAppApplicationTests extends FunctionalTestBase {
 	public void hasTheJobCompleted() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 		Assert.assertEquals("COMPLETED", jobExecution.getExitStatus().getExitCode());
-		List<String> personList = jdbcTemplate
-				.queryForList("SELECT first_name from people", String.class);
-		junit.framework.Assert.assertNotNull(personList);
-		junit.framework.Assert.assertEquals(10, personList.size());
 	}
-
 
 	@After
 	public void tearDown() throws Exception{
