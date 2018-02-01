@@ -9,22 +9,23 @@ import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private String sql = "SELECT first_name, last_name FROM people";
 
-    @Autowired
-    public JobCompletionNotificationListener(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    private Class mappedClass;
+
+    //default constructor
+    public JobCompletionNotificationListener(Class mappedClass){
+        this.mappedClass = mappedClass;
     }
 
     @Override
@@ -32,7 +33,8 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
             log.info("!!! JOB FINISHED! Time to verify the results");
 
-            List<Person> results = jdbcTemplate.query(sql,new BeanPropertyRowMapper(Person.class));
+            //List<Person> results = jdbcTemplate.query(sql,new BeanPropertyRowMapper(Person.class));
+            List<Person> results = jdbcTemplate.query(sql,new BeanPropertyRowMapper(mappedClass));
 
             for (Person person : results) {
                 log.info("Found <" + person + "> in the database.");

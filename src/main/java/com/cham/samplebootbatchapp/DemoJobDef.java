@@ -10,6 +10,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,11 @@ public class DemoJobDef extends JobBase {
     }
 
     @Bean
+    public JobExecutionListenerSupport listener(){
+        return new JobCompletionNotificationListener(Person.class);
+    }
+
+    @Bean
     public JdbcBatchItemWriter<Person> writer() {
         return new GenericJdbcBatchItemWriter<Person>(sqlString,dataSource).getDeligate();
     }
@@ -56,10 +62,10 @@ public class DemoJobDef extends JobBase {
     }
 
     @Bean
-    public Job importUserJob(JobCompletionNotificationListener listener) {
+    public Job importUserJob() {
         return jobBuilderFactory.get(jobName)
                 .incrementer(new RunIdIncrementer())
-                .listener(listener)
+                .listener(listener())
                 .flow(step1())
                 .end()
                 .build();
