@@ -24,7 +24,7 @@ import org.springframework.context.annotation.PropertySource;
 public class DemoJobDef extends JobBase {
 
     @Value("${insertSqlString}")
-    private String sqlString;
+    private String insertQuery;
 
     @Value("${filePath}")
     private String filePath;
@@ -41,6 +41,8 @@ public class DemoJobDef extends JobBase {
     @Value("${spring.batch.job.chunk.size}")
     private int jobChunkSize;
 
+    private String selectQuery = "SELECT first_name, last_name FROM people";
+
     @Bean
     public FlatFileItemReader<Person> reader() {
         return new GenericFlatFileItemReader<Person>(filePath,headerParams, Person.class).getDelegate();
@@ -48,12 +50,12 @@ public class DemoJobDef extends JobBase {
 
     @Bean
     public JobExecutionListenerSupport listener(){
-        return new JobCompletionNotificationListener(Person.class);
+        return new JobCompletionNotificationListener(Person.class, selectQuery);
     }
 
     @Bean
     public JdbcBatchItemWriter<Person> writer() {
-        return new GenericJdbcBatchItemWriter<Person>(sqlString,dataSource).getDeligate();
+        return new GenericJdbcBatchItemWriter<Person>(insertQuery,dataSource).getDeligate();
     }
 
     @Bean
