@@ -1,7 +1,7 @@
 package com.cham.samplebootbatchapp.listnener;
 
 import com.cham.samplebootbatchapp.pojo.Person;
-import com.cham.samplebootbatchapp.reader.GenericJdbcTemplateReaderimpl;
+import com.cham.samplebootbatchapp.reader.GenericJdbcTemplateReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -20,7 +20,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
     private final Class mappedClass;
 
     @Autowired
-    private GenericJdbcTemplateReaderimpl genericJdbcTemplate;
+    private GenericJdbcTemplateReader genericJdbcTemplate;
 
     //default constructor
     public JobCompletionNotificationListener(Class mappedClass, String query){
